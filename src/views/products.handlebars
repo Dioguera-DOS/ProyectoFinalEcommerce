@@ -1,0 +1,79 @@
+
+
+<p>Welcome: <Strong>{{user.first_name}} </Strong> -- Email:{{user.email}} -- role:{{user.role}} -- CartID: {{cartId}}</p>
+
+
+
+<h1>Buy your product!!</h1>
+
+
+<ul>
+    {{#each products}}    
+
+    <li>
+       <strong>Product:</strong> {{this.title}} - <strong>price:</strong> {{this.price}} - <strong>Stock:</strong>{{this.stock}} 
+        <button type="submit" class="add-to-cart" data-product-id="{{this._id}}">Agregar al carrito</button>
+    </li>
+
+    {{/each}}
+</ul>
+
+<hr>
+<a href="/api/carts/{{cartId}}">My cart</a>
+
+<br>
+<a href="?page=1">Page.1</a>
+
+{{#if hasPrevPage}}
+<a href="?page={{prevPage}}"> </a>
+{{/if}}
+{{#if hasNextPage}}
+<a href="?page={{nextPage}}"> << </a>
+{{/if}}
+<a href="?page={{totalPages}}"> >> </a>
+
+<script>
+  
+ document.addEventListener('DOMContentLoaded', function () {
+  // Obtén todos los elementos con la clase "add-to-cart"
+  const addToCart = document.querySelectorAll('.add-to-cart');
+  
+ var cartUsuario= "{{cartId}}";
+   console.log(cartUsuario)
+  
+  // Agrega un controlador de eventos a cada botón
+  addToCart.forEach(button => {
+    button.addEventListener('click', function (e) {
+     
+      // Obtiene el id del producto desde el atributo data
+      alert('producto agregado al carrito')
+      const productId = this.getAttribute('data-product-id');
+
+      // Realiza la solicitud fetch para agregar el producto específico al carrito
+      fetch("/api/carts/" + cartUsuario + "/product/" + productId, {        
+        method: 'POST',
+      })
+        .then(response => response.json())
+        .then(data => {          
+          if (data.message === 'Producto agregado al carrito con éxito') {
+            
+            console.log('Producto agregado al carrito con éxito');
+          } else if (data.message === 'No puedes agregar tus propios productos al carrito') {
+             console.log('No puedes agregar tus propios productos al carrito');
+          }else {
+            console.log('Error al agregar el producto al carrito')
+          }
+        })
+        .catch(error => {
+          
+        });
+    });
+  });
+});
+
+
+
+</script>
+
+
+
